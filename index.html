@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body onload="AssignEvent()">
+    <h3>Inbuilt event</h3>
+    <div id="name"></div>
+    <button onclick="showName()">Say my name baby</button>
+
+    <h3>Custom event</h3>
+    <label id="myLabel"></label>
+    <br>
+    <button onclick="FireEvent()">Fire event</button>
+    <br>
+
+    <h3>Dynamic typing</h3>
+    <label>Initial value of x: </label>
+    <label id="initialValue"></label>
+    <br>
+    <label>Next value of x: </label>
+    <label id="nextValue"></label>
+
+    <h3>Promises</h3>
+    <label>Is taxi available</label>
+    <input type="checkbox" id="taxiAvailable">
+    <button onclick="getTaxi()">Request taxi</button>
+    <br>
+    <label id="message"></label>
+
+    <script>
+        //INBUILT EVENTS
+        function showName() {
+            document.getElementById('name').innerHTML = "Dj Bweha"
+        }
+
+        //CUSTOM EVENTS
+        //Assign event to a control:
+        function AssignEvent() {
+            // Obtain the object reference.
+            var Label = document.getElementById("myLabel");
+            // Assign an event to the object.
+            Label.addEventListener("SpecialMessage", HandleEvent, false);
+        }
+
+        //Firing the event:
+        function FireEvent() {
+            // Obtain the object reference.
+            var Label = document.getElementById("myLabel");
+            // Fire the event.
+            Label.dispatchEvent(SpecialEvent);
+        }
+
+        //Handling the event:
+        function HandleEvent(event) {
+            // Display the event information.
+            document.getElementById("myLabel").innerHTML =
+                "<br/>Control: " + event.currentTarget.id +
+                "<br/>Message: " + event.detail.message +
+                "<br/>Time sent: " + event.detail.time.toTimeString();
+        }
+
+        //Create a custom event
+        var SpecialEvent = new CustomEvent(
+            "SpecialMessage",
+            {
+                detail:
+                    {
+                        message: "Hello There",
+                        time: new Date()
+                    },
+                bubbles: true,
+                cancelable: true
+            }
+        );
+
+        //The message can be changed easily as follows
+        SpecialEvent.detail.message = "Ero governor :(";
+
+        //DYNAMIC TYPING
+        x = "Mutai";
+        document.getElementById("initialValue").innerHTML = x;
+        x = "10055";
+        document.getElementById("nextValue").innerHTML = x;
+
+        function getTaxi() {
+            //PROMISES
+            // Promise
+            var willIGetTaxi = new Promise(
+                function (resolve, reject) {
+                    if (document.getElementById("taxiAvailable").checked) {
+                        var taxi = {
+                            make: 'Nissan',
+                            model: 'Skyline'
+                        };
+                        resolve(taxi); // fulfilled
+                    } else {
+                        var reason = new Error('taxi is not available');
+                        reject(reason); // reject
+                    }
+
+                }
+            );
+
+            //another promise
+            var tellAFriend = function (taxi) {
+                var message = 'Hey friend, I have ordered a ' +
+                    taxi.make + ' ' + taxi.model + ' taxi';
+
+                return Promise.resolve(message);
+            };
+
+            //Consuming Promises:
+            // call our promises - chain them
+            var requestTaxi = function () {
+                willIGetTaxi
+                    .then(tellAFriend) // chain it here
+                    .then(function (fulfilled) {
+                        document.getElementById("message").innerHTML = fulfilled;
+                        // output: 'Hey friend, I have ordered a Nissan Skyline taxi.'
+                    })
+                    .catch(function (error) {
+                        // oops, no taxi
+                        document.getElementById("message").innerHTML = error;
+                        // output: 'taxi is not available'
+                    });
+            };
+
+            requestTaxi();
+        }
+    </script>
+</body>
+</html>
